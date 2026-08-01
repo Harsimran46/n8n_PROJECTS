@@ -1,0 +1,492 @@
+{
+  "name": "OUTBOND AGENT WITH TWILLIO",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "CONTACT US FORM",
+        "formDescription": "We'll call back soon asap",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "WHAT IS YOUR NAME ?"
+            },
+            {
+              "fieldLabel": "COMPANY NAME [IF YES]"
+            },
+            {
+              "fieldLabel": "WHAT IS YOUR PHONE NUMBER",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "NEEDS OF SERVICES ?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ddd1e8ae-cbc1-4ef5-bca8-63d4be7907b6",
+      "name": "On form submission",
+      "webhookId": "6244ddd4-6dc4-4af0-9c8b-717b4913b678"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1KkHk85nZz0vT8EixVyY8Y_szUOJR8fEoF9NQKKvfgfk",
+          "mode": "list",
+          "cachedResultName": "LEADS FROM CONTACT US FORM ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KkHk85nZz0vT8EixVyY8Y_szUOJR8fEoF9NQKKvfgfk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KkHk85nZz0vT8EixVyY8Y_szUOJR8fEoF9NQKKvfgfk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NAME": "={{ $json['WHAT IS YOUR NAME ?'] }}",
+            "COMPANY": "={{ $json['COMPANY NAME [IF YES]'] }}",
+            "Phone Number": "={{ $json['WHAT IS YOUR PHONE NUMBER'] }}",
+            "SERVICES REQ": "={{ $json['NEEDS OF SERVICES ?'] }}",
+            "TIME AND DATE SUBMITTED": "={{ $json.submittedAt }}"
+          },
+          "matchingColumns": [
+            "NAME"
+          ],
+          "schema": [
+            {
+              "id": "NAME",
+              "displayName": "NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COMPANY",
+              "displayName": "COMPANY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "SERVICES REQ",
+              "displayName": "SERVICES REQ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "TIME AND DATE SUBMITTED",
+              "displayName": "TIME AND DATE SUBMITTED",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "CALL MADE OR NOT",
+              "displayName": "CALL MADE OR NOT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ab7e0ffb-7d18-4207-b63c-728474e4ccc3",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JtD41vvj8jQ8aasB",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/convai/twilio/outbound-call",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key",
+              "value": "73aec4c14ede38aa07cbf9b98aacf6958d42ed5c2097269fd98f52c5768a45f7"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"agent_id\": \"agent_4101kxd21xexej3rydx35bgf1sn8\",\n  \"agent_phone_number_id\": \"phnum_2301kxfn6bwpfessytvgndzv9x7f\",\n  \"to_number\": \"=+91{{$json['Phone Number']}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        432,
+        0
+      ],
+      "id": "2618ee57-32c4-46f6-b635-233acbb4a9ff",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d8041481-e024-4d96-9232-ace313de2cc1",
+              "leftValue": "={{ $json.success }}",
+              "rightValue": "={{ true }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        656,
+        0
+      ],
+      "id": "2b6ceb0c-b34f-4250-bf64-89071701d127",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1KkHk85nZz0vT8EixVyY8Y_szUOJR8fEoF9NQKKvfgfk",
+          "mode": "list",
+          "cachedResultName": "LEADS FROM CONTACT US FORM ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KkHk85nZz0vT8EixVyY8Y_szUOJR8fEoF9NQKKvfgfk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KkHk85nZz0vT8EixVyY8Y_szUOJR8fEoF9NQKKvfgfk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "CALL MADE OR NOT": "YES MADE",
+            "NAME": "={{ $('On form submission').item.json['WHAT IS YOUR NAME ?'] }}"
+          },
+          "matchingColumns": [
+            "NAME"
+          ],
+          "schema": [
+            {
+              "id": "NAME",
+              "displayName": "NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COMPANY",
+              "displayName": "COMPANY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "SERVICES REQ",
+              "displayName": "SERVICES REQ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TIME AND DATE SUBMITTED",
+              "displayName": "TIME AND DATE SUBMITTED",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CALL MADE OR NOT",
+              "displayName": "CALL MADE OR NOT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        -96
+      ],
+      "id": "d42d86a4-87db-4711-9399-282b05a77012",
+      "name": "Append or update row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JtD41vvj8jQ8aasB",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1KkHk85nZz0vT8EixVyY8Y_szUOJR8fEoF9NQKKvfgfk",
+          "mode": "list",
+          "cachedResultName": "LEADS FROM CONTACT US FORM ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KkHk85nZz0vT8EixVyY8Y_szUOJR8fEoF9NQKKvfgfk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1KkHk85nZz0vT8EixVyY8Y_szUOJR8fEoF9NQKKvfgfk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "CALL MADE OR NOT": "FAILED OR NOT MADE",
+            "NAME": "={{ $('On form submission').item.json['WHAT IS YOUR NAME ?'] }}"
+          },
+          "matchingColumns": [
+            "NAME"
+          ],
+          "schema": [
+            {
+              "id": "NAME",
+              "displayName": "NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "COMPANY",
+              "displayName": "COMPANY",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "SERVICES REQ",
+              "displayName": "SERVICES REQ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TIME AND DATE SUBMITTED",
+              "displayName": "TIME AND DATE SUBMITTED",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CALL MADE OR NOT",
+              "displayName": "CALL MADE OR NOT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        96
+      ],
+      "id": "7f17c171-6496-4c6d-97dc-895c76c79f7c",
+      "name": "Append or update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JtD41vvj8jQ8aasB",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "triggerCount": 0,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
