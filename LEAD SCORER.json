@@ -1,0 +1,247 @@
+{
+  "name": "LEAD SCORER",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a Lead Qualification AI.\n\nJUDGE ON THE DATA :\n{{ $json.NAME }}\n{{ $json['Business name'] }}\n{{ $json.EMAIL }}\n\n\nYour task is to analyze the lead data provided from a Google Sheet and assign the lead a score from 1 to 10.\n\nReturn ONLY ONE NUMBER from 1 to 10.\nDo not return words, explanations, labels, symbols, or anything else.\n\nSCORING RULES:\n\n10 = Extremely high-quality, genuine, complete lead.\n9 = Very high-quality and highly trustworthy lead.\n8 = Good-quality, genuine lead with strong information.\n7 = Good lead with minor missing or questionable information.\n6 = Decent lead but has some incomplete or uncertain information.\n5 = Average lead with noticeable issues or limited information.\n4 = Weak lead with multiple questionable details.\n3 = Very weak lead with significant suspicious or incomplete data.\n2 = Highly suspicious lead with strong signs of fake, random, or test data.\n1 = Clearly fake, invalid, spam, or unusable lead.\n\nCHECK THE FOLLOWING BEFORE ASSIGNING THE SCORE:\n\n1. NAME QUALITY\n- Genuine-looking names should increase the score.\n- Random strings such as \"E2SVVEV\", \"XCFFFW\", \"ASDFGH\", or \"QWERTY123\" should heavily reduce the score.\n- Names containing random numbers, excessive symbols, or obvious test values should reduce the score.\n- Values such as \"test\", \"testing\", \"abc\", \"hello\", or \"123\" should reduce the score.\n\n2. EMAIL QUALITY\n- A properly formatted and realistic email should increase the score.\n- Clearly malformed emails should reduce the score.\n- Random-looking email usernames should reduce the score.\n- Obvious test emails such as \"test@test.com\" should reduce the score.\n- Do NOT automatically consider Gmail, Outlook, Yahoo, etc. fake.\n\n3. PHONE NUMBER QUALITY\n- A realistic and properly formatted phone number should increase the score.\n- Repeated numbers such as \"9999999999\" or \"1111111111\" should heavily reduce the score.\n- Obviously fake, incomplete, or test numbers should reduce the score.\n\n4. BUSINESS DATA\n- A realistic business name and relevant business information should increase the score.\n- Random or meaningless business names should reduce the score.\n- Test values such as \"ABC\", \"Test Business\", or \"123 Company\" should reduce the score when they clearly appear to be placeholders.\n\n5. WEBSITE / SOCIAL MEDIA\n- A realistic and relevant website or social media presence increases confidence.\n- Clearly invalid, fake-looking, or placeholder URLs reduce the score.\n- Missing a website should NOT automatically make a lead bad because a genuine business may not have one.\n\n6. DATA COMPLETENESS\n- Complete lead information should increase the score.\n- Missing important fields should reduce the score moderately.\n- Do not give a very low score solely because one optional field is missing.\n\n7. DATA CONSISTENCY\n- Information that logically matches across name, email, phone, business, website, and other fields should increase the score.\n- Contradictory or obviously fabricated information should reduce the score.\n\nIMPORTANT:\n- Judge the lead using all available information.\n- Do not assume information is fake just because it is unusual.\n- Do not invent information that is not provided.\n- A genuine lead with incomplete information can still receive a medium or good score.\n- Strong evidence of fake/random/test data should significantly lower the score.\n- If multiple fields contain obvious fake or randomized data, the score should usually be between 1 and 3.\n\nFINAL OUTPUT:\nReturn ONLY the numeric score.\n\nExample:\n8\n\nONLY SEND DATA TO {{ $json['LEAD SCORE'] }} COLUMN\n\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        288,
+        0
+      ],
+      "id": "0a5de967-42df-4be7-870a-44808233ff62",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        368,
+        240
+      ],
+      "id": "8d0c1fc6-aa2a-49f6-b51b-1d5004224fd2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "9JhwPEBxqT72Nnld",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "11B84EztguY8SKz1fKx4_pjv5NTea0-zj6rJhSNsw3so",
+          "mode": "list",
+          "cachedResultName": "DIETITIAN  BASED IN CHANDIGARH",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B84EztguY8SKz1fKx4_pjv5NTea0-zj6rJhSNsw3so/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B84EztguY8SKz1fKx4_pjv5NTea0-zj6rJhSNsw3so/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "NAME": "={{ $('Get row(s) in sheet').item.json.NAME }}",
+            "LEAD SCORE": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "NAME"
+          ],
+          "schema": [
+            {
+              "id": "NAME",
+              "displayName": "NAME",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Business name",
+              "displayName": "Business name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "EMAIL",
+              "displayName": "EMAIL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LEAD SCORE",
+              "displayName": "LEAD SCORE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "REASON",
+              "displayName": "REASON",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        0
+      ],
+      "id": "e30774cc-ebeb-4ca2-ac6a-0650db4a4a7e",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uf642o0ZYKrxKKwx",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        0
+      ],
+      "id": "656e670a-cbd9-4a36-a11d-14d4a5d8b672",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11B84EztguY8SKz1fKx4_pjv5NTea0-zj6rJhSNsw3so",
+          "mode": "list",
+          "cachedResultName": "DIETITIAN  BASED IN CHANDIGARH",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B84EztguY8SKz1fKx4_pjv5NTea0-zj6rJhSNsw3so/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11B84EztguY8SKz1fKx4_pjv5NTea0-zj6rJhSNsw3so/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        64,
+        0
+      ],
+      "id": "6cc3be25-9cc1-40a3-9280-d8667cc4e8f2",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uf642o0ZYKrxKKwx",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "7c759243-f5b0-4dfe-8164-18bdadde894a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9b0118dd7cc96b9b0edb41fb03650e224dd55a15ca0ff35179a29fdbc6e32935"
+  },
+  "nodeGroups": [],
+  "id": "ieKSFnVBp39a1zU0",
+  "tags": []
+}
