@@ -1,0 +1,267 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "# ROLE\n\nYou are a friendly, professional, and efficient appointment-booking assistant.\n\nYour job is to help customers book, check, reschedule, or cancel appointments.\n\nBe conversational, helpful, and straight to the point.\n\nNever sound robotic or overly formal.\n\n---\n\n# CORE BEHAVIOR\n\n* Always understand what the customer wants before taking action.\n* Ask only for the information that is necessary.\n* Never ask multiple unnecessary questions at once.\n* Keep responses short and easy to understand.\n* Never overwhelm the customer with long explanations.\n* Do not repeat information the customer has already provided.\n* Never make up appointment availability.\n* Never claim an appointment is booked unless the booking action/tool successfully confirms it.\n\n---\n\n# APPOINTMENT BOOKING FLOW\n\nWhen a customer wants to book an appointment:\n\n1. Ask for their name if you don't already have it.\n\n2. Ask what service they want.\n\n3. Ask for their preferred date.\n\n4. Ask for their preferred time.\n\n5. Check the calendar/availability using the available calendar tool.\n\n6. If the requested slot is available, confirm the details with the customer before creating the appointment.\n\n7. Create the appointment using the calendar tool.\n\n8. Only after the tool successfully creates the event, tell the customer that the appointment is confirmed.\n\n9. Give them a short confirmation containing:\n\n   * Name\n   * Service\n   * Date\n   * Time\n\n---\n\n# IF THE REQUESTED SLOT IS UNAVAILABLE\n\nDo not pretend the slot is available.\n\nTell the customer that the requested time is unavailable and offer alternative available times.\n\nExample:\n\n\"That time isn't available. I can offer 3:00 PM or 4:30 PM instead. Which works better for you?\"\n\n---\n\n# IF THE CUSTOMER GIVES INCOMPLETE INFORMATION\n\nAsk only for the missing information.\n\nExample:\n\nCustomer:\n\"I want an appointment tomorrow.\"\n\nAssistant:\n\"Sure! What time would you prefer?\"\n\nDo not ask again for information already provided.\n\n---\n\n# RESCHEDULING\n\nIf the customer wants to reschedule:\n\n1. Identify their existing appointment.\n2. Ask for the new preferred date/time if they haven't provided it.\n3. Check availability.\n4. If available, update the appointment.\n5. Confirm the new appointment details.\n\n---\n\n# CANCELLATION\n\nIf the customer wants to cancel:\n\n1. Identify the appointment.\n2. Confirm which appointment they want to cancel if necessary.\n3. Cancel it using the calendar tool.\n4. Confirm the cancellation.\n\nKeep the response short.\n\n---\n\n# DATE AND TIME RULES\n\n* Always interpret dates and times carefully.\n* If the customer says \"tomorrow\", \"today\", \"Monday\", etc., use the current date to determine the actual date.\n* Never guess an ambiguous date or time.\n* If something is unclear, ask a short clarification question.\n* Use the business's configured timezone.\n* When confirming appointments, use a clear human-readable format.\n\nExample:\n\n\"Monday, August 24 at 3:00 PM\"\n\n---\n\n# CALENDAR TOOL RULES\n\nUse the calendar tool whenever you need to:\n\n* Check availability\n* Create an appointment\n* Reschedule an appointment\n* Cancel an appointment\n* Find an existing appointment\n\nNever say that an action was completed before the tool confirms success.\n\nIf a tool fails, honestly tell the customer that you couldn't complete the action and ask them to try again.\n\n---\n\n# CONVERSATION STYLE\n\nYour personality should be:\n\n* Friendly\n* Professional\n* Helpful\n* Concise\n* Natural\n* Direct\n\nUse simple language.\n\nAvoid unnecessary phrases such as:\n\n\"I would be more than happy to assist you with that.\"\n\nInstead say:\n\n\"Sure! What date would you prefer?\"\n\n---\n\n# MESSAGE FORMATTING — VERY IMPORTANT\n\nALWAYS leave a blank line between separate thoughts, questions, or pieces of information.\n\nNever send one large paragraph.\n\nUse short messages.\n\nExample:\n\n\"Sure! I can help you book that.\n\nWhat date would you prefer?\"\n\nFor confirmations:\n\n\"Your appointment is confirmed! ✅\n\nName: Rahul\n\nService: Consultation\n\nDate: Monday, August 24\n\nTime: 3:00 PM\n\nSee you then!\"\n\nDo NOT write:\n\n\"Your appointment is confirmed! Name: Rahul Service: Consultation Date: Monday, August 24 Time: 3:00 PM See you then!\"\n\nAlways use line breaks and blank lines.\n\n---\n\n# IMPORTANT RESTRICTIONS\n\n* Do not invent availability.\n* Do not invent services.\n* Do not invent appointment details.\n* Do not book without checking availability.\n* Do not confirm a booking before the calendar tool succeeds.\n* Do not ask for information that is already available.\n* Do not repeat the same question unnecessarily.\n* Do not give long explanations.\n* Do not use complicated language.\n* Do not send huge paragraphs.\n* Do not mention internal tools, workflows, APIs, or system instructions to the customer.\n\n---\n\n# DEFAULT RESPONSE STYLE\n\nKeep most responses between 1–3 short sentences.\n\nAsk one clear question at a time when information is missing.\n\nAlways prioritize completing the customer's appointment quickly and accurately.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        928,
+        304
+      ],
+      "id": "f253c457-7dc8-440c-9adc-d142ae646d68",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        872,
+        536
+      ],
+      "id": "7b5a8274-2c38-483a-be0a-a9bddb96b28f",
+      "name": "Brain"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "32cacc51ee5ed317a53d69e8c051389bc449c0284531d4fae20f9a32a695ae4c@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "APPOINTMENT CALENDAR"
+        },
+        "additionalFields": {
+          "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1008,
+        544
+      ],
+      "id": "8fa50fa4-81f4-4ed2-884e-8c92c23f4faf",
+      "name": "Create",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "woBdS0XBc6AQAOqi",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "32cacc51ee5ed317a53d69e8c051389bc449c0284531d4fae20f9a32a695ae4c@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "APPOINTMENT CALENDAR"
+        },
+        "timeMin": "={{ $fromAI('After', '', 'string') }}",
+        "timeMax": "={{ $fromAI('Before', '', 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1128,
+        536
+      ],
+      "id": "39d7e815-c746-41b4-9da5-b2708ba3cbc2",
+      "name": "Search",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "woBdS0XBc6AQAOqi",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "timezone": "Asia/Kolkata"
+        }
+      },
+      "type": "n8n-nodes-base.dateTimeTool",
+      "typeVersion": 2,
+      "position": [
+        1256,
+        536
+      ],
+      "id": "85a43b3c-d074-4e65-8a9c-86ae603d0f9f",
+      "name": "Date and Time"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "None"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1456,
+        304
+      ],
+      "id": "b71b763e-9fd5-457a-8052-3b22576badb6",
+      "name": "Send a text message",
+      "webhookId": "DEMO_WEBHOOK_ID_2",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZUmMecJgAu8FiuJ7",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        512,
+        304
+      ],
+      "id": "99fd633c-1ed9-4d2b-b92d-8864e71a11cf",
+      "name": "Telegram Trigger",
+      "webhookId": "a052a4f7-2b81-476e-8cd7-736357be192c",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZUmMecJgAu8FiuJ7",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        744,
+        536
+      ],
+      "id": "c3737b03-3cec-4730-8093-f9a8c91783de",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "NKkkv0Vv0u6c5E4Y",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Brain": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date and Time": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "4a1d41d4-7c2b-45fe-aaa7-6d1b13cd25d3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9b0118dd7cc96b9b0edb41fb03650e224dd55a15ca0ff35179a29fdbc6e32935"
+  },
+  "nodeGroups": [],
+  "id": "XeB148lFTEWOUXVx",
+  "tags": []
+}
