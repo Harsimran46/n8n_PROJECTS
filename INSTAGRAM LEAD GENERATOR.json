@@ -1,0 +1,276 @@
+{
+  "name": "INSTAGRAM LEAD GENERATOR",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3e14e62a-7221-4724-9d08-3697729312ae",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/instagram-scraper~instagram-profile-scraper/run-sync-get-dataset-items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "apify_api_PopHQYWMUJeSWKK8jSzGfrtksknUaW0DZF9H"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"instagramUsernames\": [\n    \"nypost\"\n  ],\n  \"scrapeFacebookProfile\": false,\n  \"skipLatestPosts\": true,\n  \"skipRelatedProfiles\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "913ec2b2-aba4-4fab-a401-49a66080fa5a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/apify~instagram-search-scraper/run-sync-get-dataset-items",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "token",
+              "value": "apify_api_PopHQYWMUJeSWKK8jSzGfrtksknUaW0DZF9H"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"search\": \"dentist canada\",\n  \"searchType\": \"user\",\n  \"searchLimit\": 200\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "d4915ed1-8a6d-4c8f-a252-2884299636d4",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "296073d7-5b5e-467a-b5df-5e89dcd156c7",
+              "leftValue": "={{ $json.followersCount }}",
+              "rightValue": 2000,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            },
+            {
+              "id": "4cc6deff-d49e-478d-b62b-bb8694724aa2",
+              "leftValue": "={{ $json.private }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        0
+      ],
+      "id": "660964e6-f961-4811-8aa6-84c88fa3327e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1SFh7jC7M17hXhBcwE0UgLzJgd7nEfEZ4skYKk7PCBxE",
+          "mode": "list",
+          "cachedResultName": "INSTAGRAM SCRAPPER LEAD",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SFh7jC7M17hXhBcwE0UgLzJgd7nEfEZ4skYKk7PCBxE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SFh7jC7M17hXhBcwE0UgLzJgd7nEfEZ4skYKk7PCBxE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Followers": "={{ $json.followersCount }}",
+            "Instagram username": "={{ $json.username }}",
+            "Instagram URL": "={{ $json.url }}",
+            "Full name": "={{ $json.fullName }}",
+            "Biography": "={{ $json.biography }}"
+          },
+          "matchingColumns": [
+            "Instagram username"
+          ],
+          "schema": [
+            {
+              "id": "Instagram username",
+              "displayName": "Instagram username",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Full name",
+              "displayName": "Full name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Followers",
+              "displayName": "Followers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Biography",
+              "displayName": "Biography",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Instagram URL",
+              "displayName": "Instagram URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        -80
+      ],
+      "id": "c9dff8b1-20d2-4c3d-a4a5-d947135c8cfd",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "uf642o0ZYKrxKKwx",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ddd0d9bd-2b59-434f-94b9-31cb60e72143",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9b0118dd7cc96b9b0edb41fb03650e224dd55a15ca0ff35179a29fdbc6e32935"
+  },
+  "nodeGroups": [],
+  "id": "uIEs5srCrN7Ml11n",
+  "tags": []
+}
